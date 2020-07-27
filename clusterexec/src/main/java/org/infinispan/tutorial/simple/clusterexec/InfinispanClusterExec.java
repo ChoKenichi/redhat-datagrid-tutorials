@@ -14,10 +14,23 @@ import org.infinispan.configuration.global.GlobalConfigurationBuilder;
 import org.infinispan.manager.ClusterExecutor;
 import org.infinispan.manager.DefaultCacheManager;
 
+public class WaitObject {
+
+    // このオブジェクトを使って待機状態に入る
+    public synchronized void suspend() throws InterruptedException {
+        this.wait();
+    }
+    
+    // このオブジェクトを使って待機しているスレッドを全て起こす
+    public synchronized void resume() {
+        this.notifyAll();
+    }
+}
+
 public class InfinispanClusterExec {
 
     final static int MIN_SERVERS = 3;
-    final static Object obj = new Object();
+    final static WaitObject obj = new WaitObject();
 
     public static void main(String[] args) throws Exception {
         // Setup up a clustered cache manager
@@ -26,13 +39,13 @@ public class InfinispanClusterExec {
         DefaultCacheManager cacheManager = new DefaultCacheManager(global.build());
 
         // クラスタメンバが一定数以上の場合分散処理を実行する
-        if (cacheManager.getMembers().size() >= NUM_SERVERS) {
+        if (cacheManager.getMembers().size() >= MIN_SERVERS) {
             ClusterExecutor clusterExecutor = cacheManager.executor();
             CompletableFuture<Void> completableFuture = clusterExecutor.submitConsumer(cm -> {
                 // 各Data Grid ノードで実行される処理（コーディング量を減らすためにラムダ式で記述）
                 int i = new Random().nextInt(); // ランダム値を復帰値とする
                 System.out.printf("Tread[%s] callable, value[%d]\n", Thread.currentThread().getName(), i);
-                //obj.notify();
+                obj.notifyAll();
                 return i;
             }, (address, intValue, throwable) -> {
                 // 各ノードの処理結果を受け取る処理(コーディングを簡単にするためラムダ式で記述)
