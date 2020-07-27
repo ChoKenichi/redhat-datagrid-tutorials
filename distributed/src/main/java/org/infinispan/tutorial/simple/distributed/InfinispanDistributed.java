@@ -63,9 +63,9 @@ public class InfinispanDistributed {
             });
 
       }
-      // カレントノードのエントリをソートして出力する
+      // カレントノードのエントリを出力する
       System.out.println("===This node's  cache Entries ===");
-      cache.getAdvancedCache().withFlags(Flag.SKIP_REMOTE_LOOKUP).entrySet().stream().sorted(Map.Entry.comparingByKey())
+      cache.getAdvancedCache().withFlags(Flag.SKIP_REMOTE_LOOKUP).entrySet()// .stream().sorted(Map.Entry.comparingByKey())
             .forEach(entry -> System.out.printf("%s = %s\n", entry.getKey(), entry.getValue()));
       // Stop the cache manager and release all resources
       cacheManager.stop();
