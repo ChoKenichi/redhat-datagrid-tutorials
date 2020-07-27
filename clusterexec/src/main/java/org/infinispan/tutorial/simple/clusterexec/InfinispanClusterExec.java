@@ -14,7 +14,7 @@ import org.infinispan.configuration.global.GlobalConfigurationBuilder;
 import org.infinispan.manager.ClusterExecutor;
 import org.infinispan.manager.DefaultCacheManager;
 
-public class WaitObject {
+class WaitObject {
 
     // このオブジェクトを使って待機状態に入る
     public synchronized void suspend() throws InterruptedException {
@@ -45,7 +45,7 @@ public class InfinispanClusterExec {
                 // 各Data Grid ノードで実行される処理（コーディング量を減らすためにラムダ式で記述）
                 int i = new Random().nextInt(); // ランダム値を復帰値とする
                 System.out.printf("Tread[%s] callable, value[%d]\n", Thread.currentThread().getName(), i);
-                obj.notifyAll();
+                //obj.resume();
                 return i;
             }, (address, intValue, throwable) -> {
                 // 各ノードの処理結果を受け取る処理(コーディングを簡単にするためラムダ式で記述)
@@ -66,8 +66,9 @@ public class InfinispanClusterExec {
                 System.out.println("Distributed process compleated.");
             });
         } else {
-            System.out.println("Waiting more cluster node");
-            obj.wait();
+            System.out.println("Waiting to start more cluster node");
+            obj.suspend();
+            Thread.yield();
         }
         // Shuts down the cache manager and all associated resources
         cacheManager.stop();
