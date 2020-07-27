@@ -29,8 +29,8 @@ class WaitObject {
 
 public class InfinispanClusterExec {
 
-    final static int MIN_SERVERS = 3;
-    final static WaitObject obj = new WaitObject();
+    static final int MIN_SERVERS = 3;
+    static final WaitObject obj = new WaitObject();
 
     public static void main(String[] args) throws Exception {
         // Setup up a clustered cache manager

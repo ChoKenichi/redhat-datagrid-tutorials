@@ -9,7 +9,7 @@
     <name>Infinispan Tutorial: Simple tutorials</name>
 
     <properties>
-       <version.infinispan>10.1.5.Final-redhat-00001</version.infinispan>
+       <version.infinispan>10.1.8.Final-redhat-00001</version.infinispan>
     </properties>
 
     <dependencyManagement>
