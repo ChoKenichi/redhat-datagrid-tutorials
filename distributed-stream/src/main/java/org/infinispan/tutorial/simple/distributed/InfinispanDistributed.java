@@ -44,6 +44,7 @@ public class InfinispanDistributed {
       // Obtain a cache
       Cache<String, String> cache = cacheManager.administration().withFlags(CacheContainerAdmin.AdminFlag.VOLATILE)
             .getOrCreateCache("cache", builder.build());
+
       if(cacheManager.getMembers().size() < MIN_SERVERS) {
          System.out.println("Waiting to start more cluster node");
          obj.suspend();
@@ -63,7 +64,7 @@ public class InfinispanDistributed {
                                //.parallel() //各ノードでさらに並列処理を行う場合
                                .map(e -> {   
                                   // クラスタ化されたCacheManagernでデータの分散処理を行う
-                                  System.out.printf("value=%s\n", e.getValue());
+                                  System.out.printf("map phase Thread[%s] value=%s\n", Thread.currentThread(), e.getValue());
                                   return Integer.parseInt(e.getValue().substring("value".length()));
                                })
                                // 並列処理した結果を集計する

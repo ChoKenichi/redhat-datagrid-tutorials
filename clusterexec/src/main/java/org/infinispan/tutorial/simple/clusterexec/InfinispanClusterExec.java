@@ -37,6 +37,7 @@ public class InfinispanClusterExec {
         GlobalConfigurationBuilder global = GlobalConfigurationBuilder.defaultClusteredBuilder();
         // Initialize the cache manager
         DefaultCacheManager cacheManager = new DefaultCacheManager(global.build());
+        System.out.printf("\nI am [%s]\n\n", cacheManager.getAddress());
 
         // クラスタメンバが一定数以上の場合分散処理を実行する
         if (cacheManager.getMembers().size() >= MIN_SERVERS) {
@@ -44,7 +45,7 @@ public class InfinispanClusterExec {
             CompletableFuture<Void> completableFuture = clusterExecutor.submitConsumer(cm -> {
                 // 各Data Grid ノードで実行される処理（コーディング量を減らすためにラムダ式で記述）
                 int i = new Random().nextInt(); // ランダム値を復帰値とする
-                System.out.printf("Tread[%s] callable, value[%d]\n", Thread.currentThread().getName(), i);
+                System.out.printf("Tread[%s] callable, value[%d]\n", Thread.currentThread(), i);
                 //obj.resume();
                 return i;
             }, (address, intValue, throwable) -> {
