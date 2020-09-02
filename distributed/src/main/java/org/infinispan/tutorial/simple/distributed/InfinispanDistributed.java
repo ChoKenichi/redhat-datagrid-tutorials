@@ -36,22 +36,27 @@ public class InfinispanDistributed {
       DefaultCacheManager cacheManager = new DefaultCacheManager(global.build());
       //Create cache configuration
       ConfigurationBuilder builder = new ConfigurationBuilder();
-      builder.clustering().cacheMode(CacheMode.DIST_SYNC); //.hash().numOwners(2);
+      builder.clustering().cacheMode(CacheMode.DIST_SYNC);//.hash().numOwners(1);
       // Obtain a cache
       Cache<String, String> cache = cacheManager.administration().withFlags(CacheContainerAdmin.AdminFlag.VOLATILE)
             .getOrCreateCache("cache", builder.build());
       if(cacheManager.getMembers().size() < MIN_SERVERS) {
+         System.out.println("==================================");
          System.out.println("Waiting to start more cluster node");
+         System.out.println("Node Address is " + cacheManager.getNodeAddress());
+         System.out.println("==================================");
          obj.suspend();
          
       }
       else {
-         // Store the current node address in some random keys
+         // Store the current node address 
          for (int i = 0; i < 10; i++) {
-            cache.put(UUID.randomUUID().toString(), cacheManager.getNodeAddress());
+            cache.put(String.format("%05d", i), cacheManager.getNodeAddress());
          }
          // Display the current cache contents for the whole cluster
+         System.out.println("========================");
          System.out.println("===All cache Entries ===");
+         System.out.println("========================");
          cache.entrySet().forEach(entry -> System.out.printf("%s = %s\n", entry.getKey(), entry.getValue()));
          // 他のクラスタノードの処理を継続させる
          ClusterExecutor clusterExecutor = cacheManager.executor();
@@ -64,8 +69,10 @@ public class InfinispanDistributed {
 
       }
       // カレントノードのエントリを出力する
+      System.out.println("=================================");
       System.out.println("===This node's  cache Entries ===");
-      cache.getAdvancedCache().withFlags(Flag.SKIP_REMOTE_LOOKUP).entrySet()// .stream().sorted(Map.Entry.comparingByKey())
+      System.out.println("=================================");
+      cache.getAdvancedCache().withFlags(Flag.SKIP_REMOTE_LOOKUP).entrySet() .stream().sorted(Map.Entry.comparingByKey())
             .forEach(entry -> System.out.printf("%s = %s\n", entry.getKey(), entry.getValue()));
       // Stop the cache manager and release all resources
       cacheManager.stop();
