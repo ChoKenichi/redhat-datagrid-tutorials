@@ -36,10 +36,11 @@ public class InfinispanDistributed {
       DefaultCacheManager cacheManager = new DefaultCacheManager(global.build());
       //Create cache configuration
       ConfigurationBuilder builder = new ConfigurationBuilder();
-      builder.clustering().cacheMode(CacheMode.DIST_SYNC);//.hash().numOwners(1);
+      builder.clustering().cacheMode(CacheMode.DIST_SYNC); //.hash().numOwners(1);
       // Obtain a cache
       Cache<String, String> cache = cacheManager.administration().withFlags(CacheContainerAdmin.AdminFlag.VOLATILE)
             .getOrCreateCache("cache", builder.build());
+
       if(cacheManager.getMembers().size() < MIN_SERVERS) {
          System.out.println("==================================");
          System.out.println("Waiting to start more cluster node");

@@ -51,7 +51,7 @@ public class InfinispanDistributed {
          
       }
       else {
-         // Store 1 to 1000
+         // Store 1 to 100
          System.out.println("Cache[" + cache.getName() + "] start.");
          IntStream.rangeClosed(1, 100).forEach(i -> cache.put("key" + i, "value" + i));
 
@@ -63,7 +63,7 @@ public class InfinispanDistributed {
                        stream
                                //.parallel() //各ノードでさらに並列処理を行う場合
                                .map(e -> {   
-                                  // クラスタ化されたCacheManagernでデータの分散処理を行う
+                                  // クラスタ化されたCacheManagerでデータの分散処理を行う
                                   System.out.printf("map phase Thread[%s] value=%s\n", Thread.currentThread(), e.getValue());
                                   return Integer.parseInt(e.getValue().substring("value".length()));
                                })
