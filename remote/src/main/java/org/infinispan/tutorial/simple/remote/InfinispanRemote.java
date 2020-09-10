@@ -19,12 +19,14 @@ public class InfinispanRemote {
       // Create a configuration for a locally-running server
       ConfigurationBuilder builder = new ConfigurationBuilder();
       builder.addServer()
-               .host("127.0.0.1")
-               .port(ConfigurationProperties.DEFAULT_HOTROD_PORT)
+               //.host("127.0.0.1")
+               //.port(ConfigurationProperties.DEFAULT_HOTROD_PORT)
+               .host("datagrid-8-rhel8-rhdg.apps.ca-central-1.starter.openshift-online.com")
+               .port(80)
              .security().authentication()
                //Add user credentials.
-               .username("username")
-               .password("password")
+               .username("admin")
+               .password("admin")
                .realm("default")
                .saslMechanism("DIGEST-MD5");
       // Connect to the server
